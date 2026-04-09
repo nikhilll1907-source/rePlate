@@ -12,10 +12,10 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// connect database
+const connectDB=require('./db.js')
+connectDB();
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
 
 app.use('/user',userRouter);
 app.use('/post',authMiddleware,postRouter);
