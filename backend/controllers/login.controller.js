@@ -17,7 +17,7 @@ const login = async (req, res) => {
         })
     }
     else {
-        const token = jwt.sign({ username }, 'secret')
+        const token = jwt.sign({ username },  process.env.SECRET_KEY_JWT)
         res.cookie('token', token);
         res.status(200).json({
             'message': 'login successfully'

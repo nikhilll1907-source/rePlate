@@ -32,3 +32,6 @@ coverage/
 
 # Optional: cache
 .cache/
+
+// cone
+db.js

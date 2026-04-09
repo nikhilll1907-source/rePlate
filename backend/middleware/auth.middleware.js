@@ -7,7 +7,7 @@ const authMiddleware = (req, res, next) => {
         'message':'token is not present'
        })
     }
-    const {username} = jwt.verify(token, 'secret')
+    const {username} = jwt.verify(token, process.env.SECRET_KEY_JWT)
     if(!username){
        res.status(403).json({
          'message':'Invalid token'
@@ -18,4 +18,4 @@ const authMiddleware = (req, res, next) => {
         next();
     } 
 }
-export default authMiddleware;
+module.exports=authMiddleware;

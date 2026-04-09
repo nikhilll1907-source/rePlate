@@ -12,7 +12,7 @@ const signup = async (req, res) => {
     }
     else {
         const newUser = await User.create({ username, password });
-        const token = jwt.sign({ username }, 'secret')
+        const token = jwt.sign({ username },  process.env.SECRET_KEY_JWT)
         res.cookie('token', token);
         res.status(200).json({
             'message': `new user created ${newUser._id}`
