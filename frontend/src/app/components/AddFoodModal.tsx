@@ -1,98 +1,61 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { X, Upload, Calendar, Thermometer, Package, AlertTriangle } from 'lucide-react';
-import { toast } from 'sonner';
+import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { X, Upload, Calendar, Thermometer, Shield, Droplet, MapPin, User, Phone } from "lucide-react";
 
 interface AddFoodModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (foodData: FoodData) => void;
-}
-
-export interface FoodData {
-  itemName: string;
-  itemImage: File | null;
-  imagePreview: string;
-  dateOfPreparation: string;
-  expiryDate: string;
-  storageTemperature: string;
-  isSealedContainer: boolean;
-  isAcidicFood: boolean;
+  onSubmit: (data: any) => void;
 }
 
 export function AddFoodModal({ isOpen, onClose, onSubmit }: AddFoodModalProps) {
-  const [formData, setFormData] = useState<FoodData>({
-    itemName: '',
-    itemImage: null,
-    imagePreview: '',
-    dateOfPreparation: '',
-    expiryDate: '',
-    storageTemperature: '',
-    isSealedContainer: false,
-    isAcidicFood: false,
+  const [formData, setFormData] = useState({
+    name: "",
+    image: "",
+    manufactureDate: "",
+    expiryDate: "",
+    storageTemp: "",
+    sealed: false,
+    acidic: false,
+    uploaderName: "",
+    uploaderPhone: "",
+    location: "",
   });
 
-  const [isDragging, setIsDragging] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleImageUpload = (file: File) => {
-    if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData((prev) => ({
-          ...prev,
-          itemImage: file,
-          imagePreview: reader.result as string,
-        }));
-      };
-      reader.readAsDataURL(file);
-    } else {
-      toast.error('Please upload a valid image file');
-    }
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files[0];
-    if (file) handleImageUpload(file);
-  };
-
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) handleImageUpload(file);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!formData.itemImage) {
-      toast.error('Please upload an item image');
-      return;
-    }
-
-    setIsSubmitting(true);
-    
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    
-    setIsSubmitting(false);
-    toast.success('Food item added successfully!');
-    onSubmit(formData);
-    
+    onSubmit({
+      name: formData.name,
+      image: formData.image,
+      manufactureDate: formData.manufactureDate,
+      expiryDate: formData.expiryDate,
+      storageTemp: formData.storageTemp,
+      sealed: formData.sealed,
+      acidic: formData.acidic,
+      price: "Free",
+      uploader: {
+        name: formData.uploaderName,
+        phone: formData.uploaderPhone,
+        location: formData.location,
+      },
+    });
     // Reset form
     setFormData({
-      itemName: '',
-      itemImage: null,
-      imagePreview: '',
-      dateOfPreparation: '',
-      expiryDate: '',
-      storageTemperature: '',
-      isSealedContainer: false,
-      isAcidicFood: false,
+      name: "",
+      image: "",
+      manufactureDate: "",
+      expiryDate: "",
+      storageTemp: "",
+      sealed: false,
+      acidic: false,
+      uploaderName: "",
+      uploaderPhone: "",
+      location: "",
     });
-    
-    onClose();
+  };
+
+  const handleChange = (field: string, value: any) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -101,264 +64,277 @@ export function AddFoodModal({ isOpen, onClose, onSubmit }: AddFoodModalProps) {
         <>
           {/* Backdrop */}
           <motion.div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
           />
 
           {/* Modal */}
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
             <motion.div
-              className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto pointer-events-auto"
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ type: 'spring', duration: 0.5 }}
+              transition={{ type: "spring", duration: 0.5 }}
+              className="w-full max-w-2xl max-h-[90vh] overflow-y-auto backdrop-blur-2xl bg-white/95 border border-white/60 rounded-3xl shadow-2xl"
             >
               {/* Header */}
-              <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-6 flex items-center justify-between">
+              <div className="sticky top-0 backdrop-blur-xl bg-white/90 border-b border-gray-200 px-8 py-6 flex items-center justify-between">
                 <div>
-                  <h2 className="text-3xl font-bold text-white">Add Food Item</h2>
-                  <p className="text-white/80 text-sm mt-1">Share your surplus food with those in need</p>
+                  <h2 className="font-black text-gray-900" style={{ fontSize: '2rem' }}>
+                    Add Food Item
+                  </h2>
+                  <p className="text-gray-600" style={{ fontSize: '0.875rem' }}>
+                    Share your surplus food with the community
+                  </p>
                 </div>
                 <motion.button
-                  onClick={onClose}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-colors"
                   whileHover={{ scale: 1.1, rotate: 90 }}
                   whileTap={{ scale: 0.9 }}
+                  onClick={onClose}
+                  className="w-10 h-10 rounded-full backdrop-blur-md bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
                 >
-                  <X className="w-6 h-6 text-white" />
+                  <X className="w-5 h-5 text-gray-600" strokeWidth={2.5} />
                 </motion.button>
               </div>
 
               {/* Form */}
               <form onSubmit={handleSubmit} className="p-8 space-y-6">
                 {/* Item Name */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 }}
-                >
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Item Name *
+                <div>
+                  <label className="block font-black text-gray-900 mb-2" style={{ fontSize: '0.875rem' }}>
+                    Item Name
                   </label>
-                  <input
+                  <motion.input
+                    whileFocus={{ scale: 1.01 }}
                     type="text"
-                    value={formData.itemName}
-                    onChange={(e) => setFormData({ ...formData, itemName: e.target.value })}
-                    placeholder="e.g., Vegetable Biryani, Fresh Sandwiches"
                     required
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
+                    value={formData.name}
+                    onChange={(e) => handleChange("name", e.target.value)}
+                    placeholder="e.g., Fresh Vegetable Curry"
+                    className="w-full px-4 py-3 rounded-xl backdrop-blur-md bg-white/60 border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all font-semibold"
                   />
-                </motion.div>
+                </div>
 
-                {/* Image Upload */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Item Image *
+                {/* Upload Image */}
+                <div>
+                  <label className="block font-black text-gray-900 mb-2" style={{ fontSize: '0.875rem' }}>
+                    Upload Image
                   </label>
-                  <div
-                    className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all ${
-                      isDragging
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-300 hover:border-gray-400'
-                    }`}
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                      setIsDragging(true);
-                    }}
-                    onDragLeave={() => setIsDragging(false)}
-                    onDrop={handleDrop}
-                  >
-                    {formData.imagePreview ? (
-                      <motion.div
-                        className="relative"
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                      >
-                        <img
-                          src={formData.imagePreview}
-                          alt="Preview"
-                          className="w-full h-48 object-cover rounded-lg"
-                        />
-                        <motion.button
-                          type="button"
-                          onClick={() => setFormData({ ...formData, itemImage: null, imagePreview: '' })}
-                          className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                        >
-                          <X className="w-4 h-4" />
-                        </motion.button>
-                      </motion.div>
-                    ) : (
-                      <>
-                        <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                        <p className="text-gray-600 mb-2">Drag & drop your image here, or</p>
-                        <label className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700 transition-colors">
-                          Browse Files
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleFileInput}
-                            className="hidden"
-                          />
-                        </label>
-                      </>
-                    )}
-                  </div>
-                </motion.div>
+                  <motion.div whileHover={{ scale: 1.01 }} className="relative">
+                    <input
+                      type="file"
+                      required
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            handleChange("image", reader.result as string);
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="hidden"
+                      id="image-upload"
+                    />
+                    <label
+                      htmlFor="image-upload"
+                      className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl backdrop-blur-md bg-white/60 border-2 border-dashed border-gray-300 hover:border-emerald-500 focus:border-emerald-500 transition-all cursor-pointer group"
+                    >
+                      <Upload className="w-5 h-5 text-gray-400 group-hover:text-emerald-600 transition-colors" />
+                      <span className="font-semibold text-gray-600 group-hover:text-emerald-600 transition-colors">
+                        {formData.image ? "Image Selected ✓" : "Click to upload image"}
+                      </span>
+                    </label>
+                  </motion.div>
+                  {formData.image && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="mt-3 rounded-xl overflow-hidden border border-gray-200"
+                    >
+                      <img
+                        src={formData.image}
+                        alt="Preview"
+                        className="w-full h-32 object-cover"
+                      />
+                    </motion.div>
+                  )}
+                </div>
 
-                {/* Date Fields */}
+                {/* Dates */}
                 <div className="grid md:grid-cols-2 gap-6">
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Date of Preparation *
+                  <div>
+                    <label className="block font-black text-gray-900 mb-2" style={{ fontSize: '0.875rem' }}>
+                      Date of Preparation
                     </label>
-                    <div className="relative">
-                      <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <motion.div whileFocus={{ scale: 1.01 }} className="relative">
+                      <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                       <input
                         type="date"
-                        value={formData.dateOfPreparation}
-                        onChange={(e) => setFormData({ ...formData, dateOfPreparation: e.target.value })}
                         required
-                        className="w-full pl-11 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
+                        value={formData.manufactureDate}
+                        onChange={(e) => handleChange("manufactureDate", e.target.value)}
+                        className="w-full pl-12 pr-4 py-3 rounded-xl backdrop-blur-md bg-white/60 border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all font-semibold"
                       />
-                    </div>
-                  </motion.div>
+                    </motion.div>
+                  </div>
 
-                  <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Expiry Date *
+                  <div>
+                    <label className="block font-black text-gray-900 mb-2" style={{ fontSize: '0.875rem' }}>
+                      Expiry Date
                     </label>
-                    <div className="relative">
-                      <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <motion.div whileFocus={{ scale: 1.01 }} className="relative">
+                      <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                       <input
                         type="date"
-                        value={formData.expiryDate}
-                        onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
                         required
-                        min={formData.dateOfPreparation || undefined}
-                        className="w-full pl-11 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
+                        value={formData.expiryDate}
+                        onChange={(e) => handleChange("expiryDate", e.target.value)}
+                        className="w-full pl-12 pr-4 py-3 rounded-xl backdrop-blur-md bg-white/60 border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all font-semibold"
                       />
-                    </div>
-                  </motion.div>
+                    </motion.div>
+                  </div>
                 </div>
 
                 {/* Storage Temperature */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.4 }}
-                >
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Storage Temperature *
+                <div>
+                  <label className="block font-black text-gray-900 mb-2" style={{ fontSize: '0.875rem' }}>
+                    Storage Temperature
                   </label>
-                  <div className="relative">
-                    <Thermometer className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <select
-                      value={formData.storageTemperature}
-                      onChange={(e) => setFormData({ ...formData, storageTemperature: e.target.value })}
+                  <motion.div whileFocus={{ scale: 1.01 }} className="relative">
+                    <Thermometer className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      type="text"
                       required
-                      className="w-full pl-11 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors appearance-none"
-                    >
-                      <option value="">Select storage temperature</option>
-                      <option value="frozen">Frozen (Below 0°C / 32°F)</option>
-                      <option value="refrigerated">Refrigerated (0-4°C / 32-39°F)</option>
-                      <option value="cool">Cool (4-15°C / 39-59°F)</option>
-                      <option value="room">Room Temperature (15-25°C / 59-77°F)</option>
-                    </select>
+                      value={formData.storageTemp}
+                      onChange={(e) => handleChange("storageTemp", e.target.value)}
+                      placeholder="e.g., 4°C or Room Temp"
+                      className="w-full pl-12 pr-4 py-3 rounded-xl backdrop-blur-md bg-white/60 border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all font-semibold"
+                    />
+                  </motion.div>
+                </div>
+
+                {/* Divider */}
+                <div className="border-t border-gray-200 pt-6">
+                  <h3 className="font-black text-gray-900 mb-4 flex items-center gap-2" style={{ fontSize: '1.125rem' }}>
+                    <User className="w-5 h-5 text-emerald-600" />
+                    Your Contact Information
+                  </h3>
+                </div>
+
+                {/* Uploader Name */}
+                <div>
+                  <label className="block font-black text-gray-900 mb-2" style={{ fontSize: '0.875rem' }}>
+                    Your Name
+                  </label>
+                  <motion.div whileFocus={{ scale: 1.01 }} className="relative">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      type="text"
+                      required
+                      value={formData.uploaderName}
+                      onChange={(e) => handleChange("uploaderName", e.target.value)}
+                      placeholder="Enter your name"
+                      className="w-full pl-12 pr-4 py-3 rounded-xl backdrop-blur-md bg-white/60 border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all font-semibold"
+                    />
+                  </motion.div>
+                </div>
+
+                {/* Uploader Phone and Location */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block font-black text-gray-900 mb-2" style={{ fontSize: '0.875rem' }}>
+                      Phone Number
+                    </label>
+                    <motion.div whileFocus={{ scale: 1.01 }} className="relative">
+                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <input
+                        type="tel"
+                        required
+                        value={formData.uploaderPhone}
+                        onChange={(e) => handleChange("uploaderPhone", e.target.value)}
+                        placeholder="+91 98765 43210"
+                        className="w-full pl-12 pr-4 py-3 rounded-xl backdrop-blur-md bg-white/60 border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all font-semibold"
+                      />
+                    </motion.div>
                   </div>
-                </motion.div>
+
+                  <div>
+                    <label className="block font-black text-gray-900 mb-2" style={{ fontSize: '0.875rem' }}>
+                      Location
+                    </label>
+                    <motion.div whileFocus={{ scale: 1.01 }} className="relative">
+                      <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <input
+                        type="text"
+                        required
+                        value={formData.location}
+                        onChange={(e) => handleChange("location", e.target.value)}
+                        placeholder="e.g., Patna, Bihar"
+                        className="w-full pl-12 pr-4 py-3 rounded-xl backdrop-blur-md bg-white/60 border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all font-semibold"
+                      />
+                    </motion.div>
+                  </div>
+                </div>
 
                 {/* Checkboxes */}
                 <div className="space-y-4">
-                  <motion.div
-                    className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
+                  <motion.label
+                    whileHover={{ x: 4 }}
+                    className="flex items-center gap-3 cursor-pointer group"
                   >
-                    <input
-                      type="checkbox"
-                      id="sealed"
-                      checked={formData.isSealedContainer}
-                      onChange={(e) => setFormData({ ...formData, isSealedContainer: e.target.checked })}
-                      className="mt-1 w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                    />
-                    <label htmlFor="sealed" className="flex-1 cursor-pointer">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Package className="w-5 h-5 text-blue-600" />
-                        <span className="font-semibold text-gray-900">Sealed Container</span>
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        Food is stored in an airtight, sealed container
-                      </p>
-                    </label>
-                  </motion.div>
+                    <div className="relative">
+                      <input
+                        type="checkbox"
+                        checked={formData.sealed}
+                        onChange={(e) => handleChange("sealed", e.target.checked)}
+                        className="peer w-6 h-6 rounded-lg border-2 border-gray-300 checked:bg-emerald-500 checked:border-emerald-500 cursor-pointer transition-all appearance-none"
+                      />
+                      <Shield className="absolute inset-0 m-auto w-4 h-4 text-white opacity-0 peer-checked:opacity-100 pointer-events-none" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Shield className="w-5 h-5 text-emerald-600" />
+                      <span className="font-black text-gray-900">Sealed Container</span>
+                    </div>
+                  </motion.label>
 
-                  <motion.div
-                    className="flex items-start gap-3 p-4 bg-orange-50 rounded-xl border border-orange-200"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6 }}
+                  <motion.label
+                    whileHover={{ x: 4 }}
+                    className="flex items-center gap-3 cursor-pointer group"
                   >
-                    <input
-                      type="checkbox"
-                      id="acidic"
-                      checked={formData.isAcidicFood}
-                      onChange={(e) => setFormData({ ...formData, isAcidicFood: e.target.checked })}
-                      className="mt-1 w-5 h-5 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
-                    />
-                    <label htmlFor="acidic" className="flex-1 cursor-pointer">
-                      <div className="flex items-center gap-2 mb-1">
-                        <AlertTriangle className="w-5 h-5 text-orange-600" />
-                        <span className="font-semibold text-gray-900">Acidic Food</span>
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        Contains acidic ingredients (tomatoes, citrus, vinegar, etc.)
-                      </p>
-                    </label>
-                  </motion.div>
+                    <div className="relative">
+                      <input
+                        type="checkbox"
+                        checked={formData.acidic}
+                        onChange={(e) => handleChange("acidic", e.target.checked)}
+                        className="peer w-6 h-6 rounded-lg border-2 border-gray-300 checked:bg-orange-500 checked:border-orange-500 cursor-pointer transition-all appearance-none"
+                      />
+                      <Droplet className="absolute inset-0 m-auto w-4 h-4 text-white opacity-0 peer-checked:opacity-100 pointer-events-none" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Droplet className="w-5 h-5 text-orange-600" />
+                      <span className="font-black text-gray-900">Acidic Food</span>
+                    </div>
+                  </motion.label>
                 </div>
 
                 {/* Submit Button */}
                 <motion.button
+                  whileHover={{
+                    scale: 1.02,
+                    boxShadow: "0 20px 40px rgba(16, 185, 129, 0.3)",
+                  }}
+                  whileTap={{ scale: 0.98 }}
                   type="submit"
-                  disabled={isSubmitting}
-                  className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7 }}
-                  whileHover={!isSubmitting ? { scale: 1.02 } : {}}
-                  whileTap={!isSubmitting ? { scale: 0.98 } : {}}
+                  className="w-full py-4 rounded-2xl font-black bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-xl shadow-emerald-500/30"
+                  style={{ fontSize: '1.125rem' }}
                 >
-                  {isSubmitting ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <motion.div
-                        className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                      />
-                      Adding Food Item...
-                    </span>
-                  ) : (
-                    'Add Food Item'
-                  )}
+                  Add Food Item
                 </motion.button>
               </form>
             </motion.div>

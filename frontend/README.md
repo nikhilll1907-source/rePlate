@@ -1,7 +1,7 @@
 
-  # Item Card with Expiry Timer
+  # Create rePlate website
 
-  This is a code bundle for Item Card with Expiry Timer. The original project is available at https://www.figma.com/design/VcxVHsOwBcDhtXLZt7nY47/Item-Card-with-Expiry-Timer.
+  This is a code bundle for Create rePlate website. The original project is available at https://www.figma.com/design/AseXPq4vwGXcESo3Mp5byb/Create-rePlate-website.
 
   ## Running the code
 
