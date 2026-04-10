@@ -4,13 +4,12 @@ const jwt = require('jsonwebtoken');
 
 const login = async (req, res) => {
     try {
-        const { username, password } = req.body;
-        const user = await User.findOne({ username });
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
         if (!user) {
-            return res.status(404).json({
-                "success": false,
-                'message': 'user not exist'
-            })
+            return res.status(400).json({
+                message: "User not found"
+            });
         }
 
         else if (user.password !== password) {
@@ -20,7 +19,7 @@ const login = async (req, res) => {
             })
         }
         else {
-            const token = jwt.sign({ username }, process.env.SECRET_KEY_JWT)
+            const token = jwt.sign({ username: user.username }, process.env.SECRET_KEY_JWT)
             res.cookie('token', token);
             res.status(200).json({
                 "success": true,

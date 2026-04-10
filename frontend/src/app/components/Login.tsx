@@ -2,14 +2,41 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import { Link } from "react-router";
 import { Mail, Lock, ArrowRight } from "lucide-react";
+import axios from "axios";
+
 
 export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+
+  
+  const loginUser = async () => {
+  try {
+    const res = await axios.post(
+      "http://localhost:8000/user/login",
+      {
+        email,
+        password
+      },
+      {
+        withCredentials: true,
+      }
+    );
+
+    alert(res.data.message);
+  } catch (error: any) {
+    alert(
+      error?.response?.data?.message ||
+      error?.message ||
+      "Login failed"
+    );
+  }
+};
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login:", { email, password });
+    loginUser();
   };
 
   return (
@@ -119,7 +146,7 @@ export function Login() {
               transition={{ delay: 0.6 }}
               className="flex items-center justify-between"
             >
-              <label className="flex items-center gap-2 cursor-pointer group">
+              {/* <label className="flex items-center gap-2 cursor-pointer group">
                 <input
                   type="checkbox"
                   className="w-5 h-5 rounded-lg border-2 border-gray-300 checked:bg-emerald-500 checked:border-emerald-500 cursor-pointer transition-all"
@@ -127,16 +154,16 @@ export function Login() {
                 <span className="font-semibold text-gray-700 group-hover:text-emerald-600 transition-colors" style={{ fontSize: '0.875rem' }}>
                   Remember me
                 </span>
-              </label>
+              </label> */}
 
-              <motion.a
+              {/* <motion.a
                 whileHover={{ x: 3 }}
                 href="#"
                 className="font-bold text-emerald-600 hover:text-emerald-700 transition-colors"
                 style={{ fontSize: '0.875rem' }}
               >
                 Forgot password?
-              </motion.a>
+              </motion.a> */}
             </motion.div>
 
             <motion.button

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import { Link } from "react-router";
 import { User, Mail, Phone, Lock, ArrowRight, Heart } from "lucide-react";
+import axios from "axios";
 
 export function Signup() {
   const [formData, setFormData] = useState({
@@ -10,10 +11,26 @@ export function Signup() {
     mobile: "",
     password: "",
   });
+  const signupUser = async () => {
+    try {
+      const res = await axios.post("http://localhost:8000/user/signup", {
+        username: formData.name,
+        email: formData.email,
+        password: formData.password,
+      }, {
+        withCredentials: true // important if using cookies (JWT)
+      });
+      alert('User created successfully.')
+
+    } catch (error: any) {
+
+      alert(error.response?.data?.message || error.message)
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Signup:", formData);
+    signupUser();
   };
 
   const handleChange = (field: string, value: string) => {
@@ -85,7 +102,7 @@ export function Signup() {
               </motion.div>
             </motion.div>
 
-            <motion.div
+            {/* <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
@@ -104,7 +121,7 @@ export function Signup() {
                   className="w-full pl-12 pr-4 py-3.5 rounded-xl backdrop-blur-md bg-white/60 border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all font-semibold"
                 />
               </motion.div>
-            </motion.div>
+            </motion.div> */}
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
