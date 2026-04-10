@@ -11,6 +11,7 @@ const logout=require('../controllers/logout.controller');
 // Routes
 router.post('/login', login);
 router.post('/signup', signup);
-router.post('/logout',authMiddleware,logout)
+
+router.post('/logout',logout)
 
 module.exports = router;
