@@ -1,6 +1,7 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
-require("dotenv").config()
+const cors=require('cors')
+require("dotenv").config();
 
 const userRouter=require('./routes/user.route.js');
 const postRouter=require('./routes/post.route.js');
@@ -16,6 +17,11 @@ app.use(express.urlencoded({ extended: true }));
 const connectDB=require('./db.js')
 connectDB();
 
+//cors
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
 
 app.use('/user',userRouter);
 app.use('/post',authMiddleware,postRouter);
