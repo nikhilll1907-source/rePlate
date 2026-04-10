@@ -19,7 +19,7 @@ const authMiddleware = (req, res, next) => {
             })
         }
         else {
-            return req.username = username;
+            return req.userId = username._id;
             next();
         }
     }
