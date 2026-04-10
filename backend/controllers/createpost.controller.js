@@ -1,14 +1,13 @@
- const Post=require('../models/post.model');
- 
+const Post = require('../models/post.model');
+
 const createPost = async (req, res) => {
-     
 
-    const id = req.params.id;
 
-    const post = await Post.create({ id });
+    const post = await Post.create({});
     res.status(200).json({
+        "success": true,
         'message': 'new post created',
         'user': post
     })
 }
-module.exports = delPost;
+module.exports = createPost;
