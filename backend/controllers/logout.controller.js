@@ -1,8 +1,9 @@
 
 const logout = (req, res) => {
-   res.cookie('token', '');
+   res.clearCookie('token');
    res.status(200).json({
-      "message":'logout successfully'
+      "success": true,
+      "message": 'logout successfully'
    })
 }
 module.exports = logout;
